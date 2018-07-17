@@ -11,6 +11,7 @@ import com.freshworks.virtualdoctor.payload.SignUpRequest;
 import com.freshworks.virtualdoctor.repository.RoleRepository;
 import com.freshworks.virtualdoctor.repository.UserRepository;
 import com.freshworks.virtualdoctor.security.JwtTokenProvider;
+import com.freshworks.virtualdoctor.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsernameOrEmail(),
@@ -59,13 +59,15 @@ public class AuthController {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt,userPrincipal.getName(),userPrincipal.getAuthorities()));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/registrations")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        System.out.println("helloworld");
         if(userRepository.existsByUsername(signUpRequest.getUsername())) {
             return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
@@ -77,11 +79,11 @@ public class AuthController {
         }
 
         // Creating user's account
+
         User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
                 signUpRequest.getEmail(), signUpRequest.getPassword());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         Role userRole = roleRepository.findByName(RoleName.ROLE_PATIENT)
                 .orElseThrow(() -> new AppException("User Role not set."));
 
@@ -94,5 +96,6 @@ public class AuthController {
                 .buildAndExpand(result.getUsername()).toUri();
 
         return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+
     }
 }

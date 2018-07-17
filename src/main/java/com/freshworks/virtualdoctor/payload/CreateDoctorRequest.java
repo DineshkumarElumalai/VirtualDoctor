@@ -1,8 +1,11 @@
 package com.freshworks.virtualdoctor.payload;
 
-import javax.validation.constraints.*;
 
-public class SignUpRequest {
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+public class CreateDoctorRequest {
     @NotBlank
     @Size(min = 4, max = 40)
     private String name;
@@ -18,16 +21,16 @@ public class SignUpRequest {
 
     @NotBlank
     @Size(min = 6, max = 20)
-    private String password;
+    private String category;
 
-    private  int id;
-
-    public int getId() {
-        return id;
+    public CreateDoctorRequest() {
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public CreateDoctorRequest(@NotBlank @Size(min = 4, max = 40) String name, @NotBlank @Size(min = 3, max = 15) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(min = 6, max = 20) String category) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.category = category;
     }
 
     public String getName() {
@@ -54,11 +57,11 @@ public class SignUpRequest {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getCategory() {
+        return category;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
