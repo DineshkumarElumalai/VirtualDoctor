@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/api")
 public class DashBoardController {
     @Autowired
     private UserRepository userRepository;
@@ -39,23 +39,26 @@ public class DashBoardController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @GetMapping
+    @GetMapping("categories")
     @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<?>  getDoctorsCategory() {
         List<String> list = doctorRepository.findDistinctCategory();
-        HashMap<Integer,String> hm = new HashMap<>();
-        int i=0;
-        for(String s: list){
-            hm.put(i++,s);
-        }
-
+//        HashMap<Integer,String> hm = new HashMap<>();
+//        int i=0;
+//        for(String s: list){
+//            hm.put(i++,s);
+//        }
+        HashMap<String,Object> hm = new HashMap<>();
+        hm.put("category",list);
         return new ResponseEntity<>(hm,HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/create")
+    @PostMapping("dashboard/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createDoctor(@Valid @RequestBody CreateDoctorRequest createDoctorRequest){
+        HashMap<String,ApiResponse> hm = new HashMap<>();
         if(userRepository.existsByUsername(createDoctorRequest.getUsername())) {
+
             return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
@@ -83,8 +86,8 @@ public class DashBoardController {
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/api/users/{username}")
                 .buildAndExpand(userResult.getUsername()).toUri();
-
-        return  ResponseEntity.created(location).body(new ApiResponse(true, "Doctor registered successfully"));
+        hm.put("signup",new ApiResponse(true, "Doctor registered successfully"));
+        return  ResponseEntity.created(location).body(hm);
     }
 }
 

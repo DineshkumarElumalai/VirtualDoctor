@@ -9,7 +9,8 @@ public class JwtAuthenticationResponse {
     private String accessToken;
     private String tokenType = "Bearer";
     private String username;
-    private Collection<? extends GrantedAuthority> role;
+    private String role;
+    private int id = 1;
 
     public String getUsername() {
         return username;
@@ -20,19 +21,27 @@ public class JwtAuthenticationResponse {
     }
 
 
-    public Collection<? extends GrantedAuthority> getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Collection<? extends GrantedAuthority> role) {
+    public void setRole(String role) {
         this.role = role;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public JwtAuthenticationResponse(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public JwtAuthenticationResponse(String accessToken, String username, Collection<? extends GrantedAuthority> role) {
+    public JwtAuthenticationResponse(String accessToken, String username, String role) {
         this.accessToken = accessToken;
         this.username = username;
         this.role = role;

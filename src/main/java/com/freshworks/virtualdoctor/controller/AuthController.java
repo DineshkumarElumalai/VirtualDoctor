@@ -4,10 +4,7 @@ import com.freshworks.virtualdoctor.exception.AppException;
 import com.freshworks.virtualdoctor.model.Role;
 import com.freshworks.virtualdoctor.model.RoleName;
 import com.freshworks.virtualdoctor.model.User;
-import com.freshworks.virtualdoctor.payload.ApiResponse;
-import com.freshworks.virtualdoctor.payload.JwtAuthenticationResponse;
-import com.freshworks.virtualdoctor.payload.LoginRequest;
-import com.freshworks.virtualdoctor.payload.SignUpRequest;
+import com.freshworks.virtualdoctor.payload.*;
 import com.freshworks.virtualdoctor.repository.RoleRepository;
 import com.freshworks.virtualdoctor.repository.UserRepository;
 import com.freshworks.virtualdoctor.security.JwtTokenProvider;
@@ -29,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,8 +47,11 @@ public class AuthController {
     @Autowired
     JwtTokenProvider tokenProvider;
 
-    @PostMapping("/signin")
+    @PostMapping("/logins")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        //LoginRequest loginRequest = requestPayload.getLogin().get("login")
+        //System.out.println(loginRequest.getLogin().getClass().toString());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsernameOrEmail(),
@@ -62,11 +63,14 @@ public class AuthController {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt,userPrincipal.getName(),userPrincipal.getAuthorities()));
+        String role = String.valueOf( userPrincipal.getAuthorities().iterator().next());
+        System.out.println(role);
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt,userPrincipal.getName(),role));
     }
 
-    @PostMapping("/registrations")
+    @PostMapping("/signups")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        HashMap<String, ApiResponse> hm = new HashMap<>();
         System.out.println("helloworld");
         if(userRepository.existsByUsername(signUpRequest.getUsername())) {
             return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
@@ -94,8 +98,8 @@ public class AuthController {
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/api/users/{username}")
                 .buildAndExpand(result.getUsername()).toUri();
-
-        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+        hm.put("signup",new ApiResponse(true, "User registered successfully"));
+        return ResponseEntity.created(location).body(hm);
 
     }
 }

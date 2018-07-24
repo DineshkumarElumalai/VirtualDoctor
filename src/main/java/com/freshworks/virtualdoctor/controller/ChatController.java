@@ -34,6 +34,7 @@ public class ChatController {
                                SimpMessageHeaderAccessor headerAccessor) {
         // Add username in web socket session
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+        headerAccessor.getSessionAttributes().put("room", room);
         this.template.convertAndSend("/topic/public/"+room,chatMessage);
     }
 

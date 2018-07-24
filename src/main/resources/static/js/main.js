@@ -36,12 +36,13 @@ function connect(event) {
 function onConnected() {
     // Subscribe to the Public Topic
     category = document.querySelector('#category').value.trim();
+    console.log("category",category);
     stompClient.subscribe('/topic/public/'+category, onMessageReceived);
 
     // Tell your username to the server
     stompClient.send("/app/"+category+"/chat.addUser",
         {},
-        JSON.stringify({sender: username, type: 'JOIN'})
+        JSON.stringify({sender: username, type: 'JOIN',category:category})
     )
 
     connectingElement.classList.add('hidden');
@@ -56,11 +57,13 @@ function onError(error) {
 
 function sendMessage(event) {
     var messageContent = messageInput.value.trim();
+    console.log("category11",category);
     if(messageContent && stompClient) {
         var chatMessage = {
             sender: username,
             content: messageInput.value,
-            type: 'CHAT'
+            type: 'CHAT',
+            category:category
         };
         stompClient.send("/app/"+category+"/chat.sendMessage", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
@@ -105,7 +108,6 @@ function onMessageReceived(payload) {
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight;
 }
-
 
 function getAvatarColor(messageSender) {
     var hash = 0;

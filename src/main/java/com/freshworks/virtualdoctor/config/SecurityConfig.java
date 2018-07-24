@@ -18,6 +18,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.ArrayList;
 
 
 @Configuration
@@ -59,11 +64,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.cors();
         http
-                .cors()
-                .and()
-                .csrf()
-                .disable()
+//                .cors()
+//                .and()
+//                .csrf()
+//                .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
@@ -85,6 +92,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/ws/**")
                 .permitAll()
+                .antMatchers("http://localhost:4200/ws/**")
+                .permitAll()
                 .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/api/dashboard/**", "/api/users/**")
@@ -96,4 +105,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        ArrayList list = new ArrayList();
+        list.add("*");
+        ArrayList list1 = new ArrayList();
+        ArrayList list2 = new ArrayList();
+        list1.add("HEAD");
+        list1.add("GET");
+        list1.add("GET");list1.add("POST");list1.add("PUT");list1.add("DELETE");list1.add("PATCH");
+        list2.add("Authorization");list2.add("Cache-Control");list2.add("Content-Type");
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(list);
+        configuration.setAllowedMethods(list1);
+
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(list2);
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 }

@@ -31,14 +31,15 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
         String username = (String) headerAccessor.getSessionAttributes().get("username");
+        String room = (String) headerAccessor.getSessionAttributes().get("room");
         if(username != null) {
             logger.info("User Disconnected : " + username);
 
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
-
-            messagingTemplate.convertAndSend("/topic/public/general", chatMessage);
+            System.out.println(chatMessage.getCategory());
+            messagingTemplate.convertAndSend("/topic/public/"+room, chatMessage);
         }
     }
 }
