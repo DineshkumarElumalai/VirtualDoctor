@@ -40,7 +40,6 @@ public class DashBoardController {
     PasswordEncoder passwordEncoder;
 
     @GetMapping("categories")
-    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<?>  getDoctorsCategory() {
         List<String> list = doctorRepository.findDistinctCategory();
 //        HashMap<Integer,String> hm = new HashMap<>();
@@ -52,7 +51,14 @@ public class DashBoardController {
         hm.put("category",list);
         return new ResponseEntity<>(hm,HttpStatus.ACCEPTED);
     }
+    @GetMapping("doctors")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity showDoctor(){
+        HashMap<String, List> hm = new HashMap<>();
+        hm.put("doctor",doctorRepository.findAll());
+        return new ResponseEntity(hm,HttpStatus.ACCEPTED);
 
+    }
     @PostMapping("dashboard/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createDoctor(@Valid @RequestBody CreateDoctorRequest createDoctorRequest){

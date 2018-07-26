@@ -10,7 +10,26 @@ public class JwtAuthenticationResponse {
     private String tokenType = "Bearer";
     private String username;
     private String role;
-    private int id = 1;
+    private Long id ;
+
+
+    public JwtAuthenticationResponse(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+//    public JwtAuthenticationResponse(String accessToken, String username, String role) {
+//        this.accessToken = accessToken;
+//        this.username = username;
+//        this.role = role;
+//    }
+
+    public JwtAuthenticationResponse(String accessToken, String username, String role, Long id) {
+        this.accessToken = accessToken;
+        this.username = username;
+        this.role = role;
+        this.id = id;
+    }
+
 
     public String getUsername() {
         return username;
@@ -29,22 +48,13 @@ public class JwtAuthenticationResponse {
         this.role = role;
     }
 
-    public int getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public JwtAuthenticationResponse(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public JwtAuthenticationResponse(String accessToken, String username, String role) {
-        this.accessToken = accessToken;
-        this.username = username;
-        this.role = role;
     }
 
     public String getAccessToken() {

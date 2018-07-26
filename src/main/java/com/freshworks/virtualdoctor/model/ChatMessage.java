@@ -3,8 +3,9 @@ package com.freshworks.virtualdoctor.model;
 public class ChatMessage {
     private MessageType type;
     private String content;
-    private String sender;
+    private String user;
     private String category;
+
 
     public String getCategory() {
         return category;
@@ -36,11 +37,11 @@ public class ChatMessage {
         this.content = content;
     }
 
-    public String getSender() {
-        return sender;
+    public String getUser() {
+        return user;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setUser(String user) {
+        this.user = user;
     }
 }

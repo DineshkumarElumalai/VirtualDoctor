@@ -25,6 +25,7 @@ public class ChatController {
     @MessageMapping("/{room}/chat.sendMessage")
 //    @SendTo("/topic/public")
     public void sendMessage(@DestinationVariable String room, @Payload ChatMessage chatMessage) {
+        System.out.println(chatMessage.getContent());
         this.template.convertAndSend("/topic/public/"+room,chatMessage);
     }
 
@@ -33,7 +34,7 @@ public class ChatController {
     public void addUser(@DestinationVariable String room,@Payload ChatMessage chatMessage,
                                SimpMessageHeaderAccessor headerAccessor) {
         // Add username in web socket session
-        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+        headerAccessor.getSessionAttributes().put("username", chatMessage.getUser());
         headerAccessor.getSessionAttributes().put("room", room);
         this.template.convertAndSend("/topic/public/"+room,chatMessage);
     }

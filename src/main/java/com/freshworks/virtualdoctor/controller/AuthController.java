@@ -64,8 +64,9 @@ public class AuthController {
 
         String jwt = tokenProvider.generateToken(authentication);
         String role = String.valueOf( userPrincipal.getAuthorities().iterator().next());
-        System.out.println(role);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt,userPrincipal.getName(),role));
+         Long id = userPrincipal.getId();
+
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt,userPrincipal.getName(),role,id));
     }
 
     @PostMapping("/signups")
@@ -73,12 +74,14 @@ public class AuthController {
         HashMap<String, ApiResponse> hm = new HashMap<>();
         System.out.println("helloworld");
         if(userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
+            hm.put("errors",new ApiResponse(false, "Username is already taken!"));
+            return new ResponseEntity(hm,
                     HttpStatus.BAD_REQUEST);
         }
 
         if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
+            hm.put("errors",new ApiResponse(false, "Email Address already in use!"));
+            return new ResponseEntity(hm,
                     HttpStatus.BAD_REQUEST);
         }
 

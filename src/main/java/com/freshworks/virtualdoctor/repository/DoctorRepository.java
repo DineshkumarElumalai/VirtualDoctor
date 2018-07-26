@@ -14,7 +14,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     Optional<Doctor> findByUsernameOrEmail(String username, String email);
 //    List<?> findDistinctCategory();
-
+    List<Doctor> findAll();
     @Query(value = "SELECT DISTINCT category FROM doctors", nativeQuery = true)
     List<String> findDistinctCategory();
 
