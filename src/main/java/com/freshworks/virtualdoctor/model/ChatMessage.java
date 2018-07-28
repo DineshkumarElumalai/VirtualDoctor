@@ -5,7 +5,7 @@ public class ChatMessage {
     private String content;
     private String user;
     private String category;
-
+    private Long id;
 
     public String getCategory() {
         return category;
@@ -19,6 +19,14 @@ public class ChatMessage {
         CHAT,
         JOIN,
         LEAVE
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public MessageType getType() {

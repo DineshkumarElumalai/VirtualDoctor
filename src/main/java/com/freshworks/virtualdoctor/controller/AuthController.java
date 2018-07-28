@@ -64,9 +64,9 @@ public class AuthController {
 
         String jwt = tokenProvider.generateToken(authentication);
         String role = String.valueOf( userPrincipal.getAuthorities().iterator().next());
-         Long id = userPrincipal.getId();
+        Long id = userPrincipal.getId();
 
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt,userPrincipal.getName(),role,id));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt,userPrincipal.getUsername(),userPrincipal.getName(),role,id));
     }
 
     @PostMapping("/signups")

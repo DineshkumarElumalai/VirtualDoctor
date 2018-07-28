@@ -40,7 +40,7 @@ function onConnected() {
     stompClient.subscribe('/topic/public/'+category, onMessageReceived);
 
     // Tell your username to the server
-    stompClient.send("/app/"+category+"/chat.addUser",
+    stompClient.send("/app/"+category+"/3/chat.addUser",
         {},
         JSON.stringify({user: username, type: 'JOIN',category:category})
     )
@@ -65,7 +65,7 @@ function sendMessage(event) {
             type: 'CHAT',
             category:category
         };
-        stompClient.send("/app/"+category+"/chat.sendMessage", {}, JSON.stringify(chatMessage));
+        stompClient.send("/app/"+category+"/3/chat.sendMessage", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
     event.preventDefault();

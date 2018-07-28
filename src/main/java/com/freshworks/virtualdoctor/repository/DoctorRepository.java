@@ -7,14 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
-    Optional<Doctor> findByUsernameOrEmail(String username, String email);
+    Doctor findByUsername(String username);
 //    List<?> findDistinctCategory();
     List<Doctor> findAll();
+
     @Query(value = "SELECT DISTINCT category FROM doctors", nativeQuery = true)
     List<String> findDistinctCategory();
 
